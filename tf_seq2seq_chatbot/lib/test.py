@@ -1,0 +1,29 @@
+import os
+import tensorflow as tf
+
+from tf_seq2seq_chatbot.configs.config import TEST_DATASET_PATH, FLAGS
+from tf_seq2seq_chatbot.lib import data_utils
+from tf_seq2seq_chatbot.lib.seq2seq_model_utils import create_model, _get_predicted_sentence
+
+
+def test():
+    def _get_test_dataset():
+        with open(TEST_DATASET_PATH) as test_fh:
+            test_sentences = [s.strip() for s in test_fh.readlines()]
+        return test_sentences
+
+    with tf.Session() as sess:
+        # Create model and load parameters.
+        model = create_model(sess, True)
+        model.batch_size = 1  # We decode one sentence at a time.
+
+        # Load vocabularies.
+        vocab_path = os.path.join(FLAGS.data_dir, "vocab%d.in" % FLAGS.vocab_size)
+        vocab, rev_vocab = data_utils.initialize_vocabulary(vocab_path)
+
+        test_dataset = _get_test_dataset()
+
+        for sentence in test_dataset:
+            # Get token-ids for the input sentence.
+            predicted_sentence = _get_predicted_sentence(sentence, vocab, rev_vocab, model, sess)
+            print(predicted_sentence)
