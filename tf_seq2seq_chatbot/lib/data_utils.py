@@ -8,10 +8,9 @@ import re
 import sys
 
 from tensorflow.python.platform import gfile
-from six.moves import urllib
 
 # Special vocabulary symbols - we always put them at the start.
-from tf_seq2seq_chatbot.configs.config import buckets
+from tf_seq2seq_chatbot.configs.config import BUCKETS
 
 _PAD = "_PAD"
 _GO = "_GO"
@@ -108,11 +107,14 @@ def initialize_vocabulary(vocabulary_path):
   """
   if gfile.Exists(vocabulary_path):
     rev_vocab = []
+
     with gfile.GFile(vocabulary_path, mode="r") as f:
       rev_vocab.extend(f.readlines())
+
     rev_vocab = [line.strip() for line in rev_vocab]
     vocab = dict([(x, y) for (y, x) in enumerate(rev_vocab)])
     return vocab, rev_vocab
+
   else:
     raise ValueError("Vocabulary file %s not found.", vocabulary_path)
 
@@ -222,8 +224,9 @@ def read_data(tokenized_dialog_path, max_size=None):
       into the n-th bucket, i.e., such that len(source) < _buckets[n][0] and
       len(target) < _buckets[n][1]; source and target are lists of token-ids.
   """
-  data_set = [[] for _ in buckets]
+  data_set = [[] for _ in BUCKETS]
 
+  # TODO: gfile
   with gfile.GFile(tokenized_dialog_path, mode="r") as fh:
       source, target = fh.readline(), fh.readline()
       counter = 0
@@ -232,10 +235,12 @@ def read_data(tokenized_dialog_path, max_size=None):
         if counter % 100000 == 0:
           print("  reading data line %d" % counter)
           sys.stdout.flush()
+
         source_ids = [int(x) for x in source.split()]
         target_ids = [int(x) for x in target.split()]
         target_ids.append(EOS_ID)
-        for bucket_id, (source_size, target_size) in enumerate(buckets):
+
+        for bucket_id, (source_size, target_size) in enumerate(BUCKETS):
           if len(source_ids) < source_size and len(target_ids) < target_size:
             data_set[bucket_id].append([source_ids, target_ids])
             break

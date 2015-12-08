@@ -37,7 +37,7 @@ class Seq2SeqModel(object):
 
   def __init__(self, source_vocab_size, target_vocab_size, buckets, size,
                num_layers, max_gradient_norm, batch_size, learning_rate,
-               learning_rate_decay_factor, use_lstm=True,
+               learning_rate_decay_factor, use_lstm=False,
                num_samples=512, forward_only=False):
     """Create the model.
 
