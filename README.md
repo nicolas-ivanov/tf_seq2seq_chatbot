@@ -48,6 +48,8 @@ Check it up.
 Train a seq2seq model on a small (17 MB) corpus of movie subtitles:
 
     python bin/train.py
+    
+(this command will run the training on a CPU... GPU instructions are coming)
 
 Test trained trained model on a set of common questions:
 
@@ -57,7 +59,7 @@ Chat with trained model in console:
 
     python bin/chat.py
     
-All configuration params are stored here: `tf_seq2seq_chatbot/configs/config.py`
+All configuration params are stored at `tf_seq2seq_chatbot/configs/config.py`
 
 **Requirements**
 

@@ -22,5 +22,4 @@ cd Seq2Seq_Upgrade_TensorFlow
     cp $cur_dir'/tmp/setup.py' './'
 
     # build and install python package
-    sudo python setup.py build
-    sudo python setup.py install
+    sudo python setup.py build & sudo python setup.py install
