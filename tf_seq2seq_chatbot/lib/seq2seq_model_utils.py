@@ -26,7 +26,7 @@ def create_model(session, forward_only):
       use_lstm=False,
       forward_only=forward_only)
 
-  ckpt = tf.train.get_checkpoint_state(FLAGS.train_dir)
+  ckpt = tf.train.get_checkpoint_state(FLAGS.model_dir)
   if ckpt and gfile.Exists(ckpt.model_checkpoint_path):
     print("Reading model parameters from %s" % ckpt.model_checkpoint_path)
     model.saver.restore(session, ckpt.model_checkpoint_path)
