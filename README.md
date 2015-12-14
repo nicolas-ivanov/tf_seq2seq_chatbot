@@ -24,7 +24,7 @@ Everyone is welcome to investigate the code and suggest the improvements.
 * write the instructions to run the code on multple GPU's
 
 We are trying to borrow the mentioned features from this awesome repo: 
-[LeavesBreathe/Seq2Seq_Upgrade_TensorFlow](https://github.com/LeavesBreathe/Seq2Seq_Upgrade_TensorFlow).
+[LeavesBreathe/Project_RNN_Enhancement](https://github.com/LeavesBreathe/Project_RNN_Enhancement).
 Check it up.
 
 **Papers**
@@ -36,6 +36,7 @@ Check it up.
 
 [![seq2seq](https://4.bp.blogspot.com/-aArS0l1pjHQ/Vjj71pKAaEI/AAAAAAAAAxE/Nvy1FSbD_Vs/s640/2TFstaticgraphic_alt-01.png)](http://4.bp.blogspot.com/-aArS0l1pjHQ/Vjj71pKAaEI/AAAAAAAAAxE/Nvy1FSbD_Vs/s1600/2TFstaticgraphic_alt-01.png)
 
+Curtesy of [this](http://googleresearch.blogspot.ru/2015/11/computer-respond-to-this-email.html) article.
 
 **Setup**
 
@@ -64,5 +65,5 @@ All configuration params are stored at `tf_seq2seq_chatbot/configs/config.py`
 **Requirements**
 
 * [tensorflow](https://www.tensorflow.org/versions/master/get_started/os_setup.html)
-* [Seq2Seq_Upgrade_TensorFlow](https://github.com/LeavesBreathe/Seq2Seq_Upgrade_TensorFlow) (`bash bin/setup.sh` gonna get it for you)
+* [tweaked version](https://github.com/nicolas-ivanov/Seq2Seq_Upgrade_TensorFlow) of the aforementioned Project_RNN_Enhancement lib (`bash bin/setup.sh` gonna get it for you)
     
