@@ -226,7 +226,6 @@ def read_data(tokenized_dialog_path, max_size=None):
   """
   data_set = [[] for _ in BUCKETS]
 
-  # TODO: gfile
   with gfile.GFile(tokenized_dialog_path, mode="r") as fh:
       source, target = fh.readline(), fh.readline()
       counter = 0

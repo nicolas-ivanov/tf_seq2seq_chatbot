@@ -1,2 +1,2 @@
 tensorflow==0.5.0
-Seq2seq_upgrade==0.0.1
+Project-RNN-Enhancement==0.0.1

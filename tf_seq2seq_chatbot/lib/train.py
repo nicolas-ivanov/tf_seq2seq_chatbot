@@ -55,7 +55,6 @@ def train():
           encoder_inputs, decoder_inputs, target_weights = model.get_batch(
               train_set, bucket_id)
 
-          # TODO: why gradient_norm isn't used here?
           _, step_loss, _ = model.step(sess, encoder_inputs, decoder_inputs,
                                        target_weights, bucket_id, forward_only=False)
 

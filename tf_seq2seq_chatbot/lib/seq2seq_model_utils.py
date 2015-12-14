@@ -4,7 +4,7 @@ from __future__ import print_function
 
 import tensorflow as tf
 from tensorflow.python.platform import gfile
-from seq2seq_upgrade import decoding_enhanced
+from rnn_enhancement import decoding_enhanced
 
 from tf_seq2seq_chatbot.configs.config import FLAGS, BUCKETS
 from tf_seq2seq_chatbot.lib import data_utils
@@ -46,7 +46,6 @@ def _get_predicted_sentence(input_sentence, vocab, rev_vocab, model, sess):
     encoder_inputs, decoder_inputs, target_weights = model.get_batch({bucket_id: [(token_ids, [])]}, bucket_id)
 
     # Get output logits for the sentence.
-    # TODO: decoder_inputs == [PADS]
     _, _, output_logits = model.step(sess, encoder_inputs, decoder_inputs, target_weights, bucket_id, forward_only=True)
 
     TEMPERATURE = 0.7
