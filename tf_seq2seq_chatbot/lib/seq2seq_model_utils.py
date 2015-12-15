@@ -4,7 +4,7 @@ from __future__ import print_function
 
 import tensorflow as tf
 from tensorflow.python.platform import gfile
-from rnn_enhancement import decoding_enhanced
+from tf_seq2seq_chatbot.rnn_enhancement import decoding_enhanced
 
 from tf_seq2seq_chatbot.configs.config import FLAGS, BUCKETS
 from tf_seq2seq_chatbot.lib import data_utils

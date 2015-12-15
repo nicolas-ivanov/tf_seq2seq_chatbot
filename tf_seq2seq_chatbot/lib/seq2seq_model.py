@@ -10,11 +10,11 @@ import numpy as np
 from six.moves import xrange  # pylint: disable=redefined-builtin
 import tensorflow as tf
 
-# from rnn_enhancement import rnn_cell_enhanced as rnn_cell
-# from rnn_enhancement import seq2seq_enhanced as seq2seq
+from tf_seq2seq_chatbot.rnn_enhancement import rnn_cell_enhanced as rnn_cell
+from tf_seq2seq_chatbot.rnn_enhancement import seq2seq_enhanced as seq2seq
 
-from tensorflow.models.rnn import rnn_cell
-from tensorflow.models.rnn import seq2seq
+#from tensorflow.models.rnn import rnn_cell
+#from tensorflow.models.rnn import seq2seq
 
 
 from tf_seq2seq_chatbot.lib import data_utils
