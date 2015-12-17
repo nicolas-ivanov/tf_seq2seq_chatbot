@@ -91,8 +91,8 @@ class Seq2SeqModel(object):
     single_cell = rnn_cell.GRUCell(size)
 
     if use_lstm:
-       print('use lstm')
-       single_cell = rnn_cell.BasicLSTMCell(size)
+      print('use lstm')
+      single_cell = rnn_cell.BasicLSTMCell(size)
 
     cell = single_cell
     if num_layers > 1:
