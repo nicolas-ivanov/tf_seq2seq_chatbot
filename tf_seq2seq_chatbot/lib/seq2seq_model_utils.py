@@ -4,7 +4,7 @@ from __future__ import print_function
 
 import tensorflow as tf
 from tensorflow.python.platform import gfile
-from tf_seq2seq_chatbot.rnn_enhancement import decoding_enhanced
+from rnn_enhancement import decoding_enhanced
 
 from tf_seq2seq_chatbot.configs.config import FLAGS, BUCKETS
 from tf_seq2seq_chatbot.lib import data_utils
@@ -32,7 +32,7 @@ def create_model(session, forward_only):
     model.saver.restore(session, ckpt.model_checkpoint_path)
   else:
     print("Created model with fresh parameters.")
-    session.run(tf.variables.initialize_all_variables())
+    session.run(tf.initialize_all_variables())
   return model
 
 

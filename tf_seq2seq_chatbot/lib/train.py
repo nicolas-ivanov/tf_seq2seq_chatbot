@@ -2,7 +2,9 @@ import sys
 import os
 import math
 import time
+
 import numpy as np
+
 from six.moves import xrange  # pylint: disable=redefined-builtin
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -12,7 +14,7 @@ import tensorflow as tf
 from tf_seq2seq_chatbot.lib.seq2seq_model_utils import create_model
 from tf_seq2seq_chatbot.configs.config import FLAGS, BUCKETS
 from tf_seq2seq_chatbot.lib.data_utils import read_data
-from tf_seq2seq_chatbot.lib import data_utils, predict
+from tf_seq2seq_chatbot.lib import data_utils
 
 
 def train():
@@ -89,6 +91,3 @@ def train():
               print("  eval: bucket %d perplexity %.2f" % (bucket_id, eval_ppx))
 
             sys.stdout.flush()
-
-            # Print prediction results for the test set
-            predict.predict()

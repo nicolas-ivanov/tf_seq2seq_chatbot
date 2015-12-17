@@ -5,16 +5,15 @@ from __future__ import division
 from __future__ import print_function
 
 import random
-
 import numpy as np
 from six.moves import xrange  # pylint: disable=redefined-builtin
 import tensorflow as tf
 
-from tf_seq2seq_chatbot.rnn_enhancement import rnn_cell_enhanced as rnn_cell
-from tf_seq2seq_chatbot.rnn_enhancement import seq2seq_enhanced as seq2seq
+from rnn_enhancement import rnn_cell_enhanced as rnn_cell
+from rnn_enhancement import seq2seq_enhanced as seq2seq
 
-#from tensorflow.models.rnn import rnn_cell
-#from tensorflow.models.rnn import seq2seq
+# from tensorflow.models.rnn import rnn_cell
+# from tensorflow.models.rnn import seq2seq
 
 
 from tf_seq2seq_chatbot.lib import data_utils
@@ -90,12 +89,20 @@ class Seq2SeqModel(object):
 
     # Create the internal multi-layer cell for our RNN.
     single_cell = rnn_cell.GRUCell(size)
+
     if use_lstm:
       print('use lstm')
       single_cell = rnn_cell.BasicLSTMCell(size)
+
     cell = single_cell
     if num_layers > 1:
-      cell = rnn_cell.MultiRNNCell([single_cell] * num_layers)
+      #cell = rnn_cell.MultiRNNCell([single_cell] * num_layers)
+
+      # Try using multiple GPUs simultaneously
+      layers = [rnn_cell.GRUCell(size, gpu_for_layer=i) for i in xrange(num_layers)]
+
+      # it's assumed that seq2seq encoder and decoder both have "num_layers" layers
+      cell = rnn_cell.MultiRNNCell(layers)
 
     # The seq2seq function: we use embedding for the input and attention.
     def seq2seq_f(encoder_inputs, decoder_inputs, do_decode):

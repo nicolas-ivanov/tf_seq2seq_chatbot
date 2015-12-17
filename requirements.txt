@@ -1,2 +1,2 @@
-tensorflow==0.5.0
-Project-RNN-Enhancement==0.0.1
+tensorflow==0.6.0
+git+ssh://git@github.com/nicolas-ivanov/Seq2Seq_Upgrade_TensorFlow.git
