@@ -35,7 +35,8 @@ py_library(
     ],
     deps = [
         "//tensorflow:tensorflow_py",
-        ":rnn_enhanced"
+        ":rnn_enhanced",
+        ":Project-RNN-Enhancement"
     ],
 )
 

@@ -4,16 +4,20 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import random
+# import os
+# import sys
+# sys.path.insert(0, os.environ['HOME'] + 'Code/Project_RNN_Enhancement') #add the dir that you cloned to
+# from Project_RNN_Enhancement.rnn_enhancement import seq2seq_enhanced as seq2seq, rnn_cell_enhanced as rnn_cell, decoding_enhanced
 
+import random
 import numpy as np
 from six.moves import xrange  # pylint: disable=redefined-builtin
 import tensorflow as tf
 
-from tf_seq2seq_chatbot.rnn_enhancement import rnn_cell_enhanced as rnn_cell
-from tf_seq2seq_chatbot.rnn_enhancement import seq2seq_enhanced as seq2seq
+from rnn_enhancement import rnn_cell_enhanced as rnn_cell
+from rnn_enhancement import seq2seq_enhanced as seq2seq
 
-#from tensorflow.models.rnn import rnn_cell
+# from tensorflow.models.rnn import rnn_cell
 #from tensorflow.models.rnn import seq2seq
 
 

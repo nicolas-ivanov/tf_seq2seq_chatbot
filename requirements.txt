@@ -1,2 +1,2 @@
 tensorflow==0.5.0
-Project-RNN-Enhancement==0.0.1
+rnn_enhancement==0.0.1
