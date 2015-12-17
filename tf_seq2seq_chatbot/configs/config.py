@@ -14,7 +14,7 @@ tf.app.flags.DEFINE_integer('batch_size', 128, 'Batch size to use during trainin
 
 tf.app.flags.DEFINE_integer('vocab_size', 80000, 'Dialog vocabulary size.')
 tf.app.flags.DEFINE_integer('size', 128, 'Size of each model layer.')
-tf.app.flags.DEFINE_integer('num_layers', 1, 'Number of layers in the model.')
+tf.app.flags.DEFINE_integer('num_layers', 2, 'Number of layers in the model.')
 
 tf.app.flags.DEFINE_integer('max_train_data_size', 0, 'Limit on the size of training data (0: no limit).')
 tf.app.flags.DEFINE_integer('steps_per_checkpoint', 100, 'How many training steps to do per checkpoint.')
