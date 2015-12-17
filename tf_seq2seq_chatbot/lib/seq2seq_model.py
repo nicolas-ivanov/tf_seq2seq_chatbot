@@ -4,11 +4,6 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-# import os
-# import sys
-# sys.path.insert(0, os.environ['HOME'] + 'Code/Project_RNN_Enhancement') #add the dir that you cloned to
-# from Project_RNN_Enhancement.rnn_enhancement import seq2seq_enhanced as seq2seq, rnn_cell_enhanced as rnn_cell, decoding_enhanced
-
 import random
 import numpy as np
 from six.moves import xrange  # pylint: disable=redefined-builtin
@@ -95,22 +90,19 @@ class Seq2SeqModel(object):
     # Create the internal multi-layer cell for our RNN.
     single_cell = rnn_cell.GRUCell(size)
 
-    # if use_lstm:
-    #   print('use lstm')
-    #   single_cell = rnn_cell.BasicLSTMCell(size)
+    if use_lstm:
+       print('use lstm')
+       single_cell = rnn_cell.BasicLSTMCell(size)
 
     cell = single_cell
     if num_layers > 1:
       #cell = rnn_cell.MultiRNNCell([single_cell] * num_layers)
 
       # Try using multiple GPUs simultaneously
-      first_layer = rnn_cell.GRUCell(size, gpu_for_layer=0)
-      second_layer = rnn_cell.GRUCell(size, gpu_for_layer=1)
-      third_layer = rnn_cell.GRUCell(size, gpu_for_layer=2)
-      fourth_layer = rnn_cell.GRUCell(size, gpu_for_layer=3)
+      layers = [rnn_cell.GRUCell(size, gpu_for_layer=i) for i in xrange(num_layers)]
 
-      # it's assumed that seq2seq encoder and decoder both have 4 layers
-      cell = rnn_cell.MultiRNNCell([first_layer, second_layer, third_layer, fourth_layer])
+      # it's assumed that seq2seq encoder and decoder both have "num_layers" layers
+      cell = rnn_cell.MultiRNNCell(layers)
 
     # The seq2seq function: we use embedding for the input and attention.
     def seq2seq_f(encoder_inputs, decoder_inputs, do_decode):
