@@ -93,10 +93,17 @@ class Seq2SeqModel(object):
       softmax_loss_function = sampled_loss
 
     # Create the internal multi-layer cell for our RNN.
-    single_cell = rnn_cell.GRUCell(size)
+    # cell = rnn_cell.GRUCell(size)
+
+    # Try using multiple GPUs simultaneously
+    first_layer = rnn_cell.GRUCell(size, gpu_for_layer=0)
+    second_layer = rnn_cell.GRUCell(size, gpu_for_layer=1)
+    single_cell = ([first_layer] * (num_layers / 2)) + ([second_layer] * (num_layers / 2))
+
     if use_lstm:
       print('use lstm')
       single_cell = rnn_cell.BasicLSTMCell(size)
+
     cell = single_cell
     if num_layers > 1:
       cell = rnn_cell.MultiRNNCell([single_cell] * num_layers)
