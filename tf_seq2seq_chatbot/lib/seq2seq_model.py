@@ -98,7 +98,7 @@ class Seq2SeqModel(object):
     # Try using multiple GPUs simultaneously
     first_layer = rnn_cell.GRUCell(size, gpu_for_layer=0)
     second_layer = rnn_cell.GRUCell(size, gpu_for_layer=1)
-    single_cell = ([first_layer] * (num_layers / 2)) + ([second_layer] * (num_layers / 2))
+    single_cell = ([first_layer] * int(num_layers / 2)) + ([second_layer] * int(num_layers / 2))
 
     if use_lstm:
       print('use lstm')
