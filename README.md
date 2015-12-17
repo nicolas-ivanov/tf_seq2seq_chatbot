@@ -21,11 +21,7 @@ Everyone is welcome to investigate the code and suggest the improvements.
 **Actual deeds**
 
 * realise how to diversify chatbot answers (currently the most probable one is picked and it's dull)
-* write the instructions to run the code on multple GPU's
 
-We are trying to borrow the mentioned features from this awesome repo: 
-[LeavesBreathe/Project_RNN_Enhancement](https://github.com/LeavesBreathe/Project_RNN_Enhancement).
-Check it up.
 
 **Papers**
 
@@ -61,6 +57,19 @@ Chat with trained model in console:
     python bin/chat.py
     
 All configuration params are stored at `tf_seq2seq_chatbot/configs/config.py`
+
+**GPU usage**
+
+If you are lucky to have a proper gpu configuration for tensorflow already, this should do the job:
+
+    python bin/train.py
+    
+Otherwise you may need to build tensorflow from source and run the code as follows:
+
+    cd tensorflow  # cd to the tensorflow source folder
+    cp -r ~/tf_seq2seq_chatbot ./  # copy project's code to tensorflow root
+    bazel build -c opt --config=cuda tf_seq2seq_chatbot:train  # build with gpu-enable option
+    ./bazel-bin/tf_seq2seq_chatbot/train  # run the built code
 
 **Requirements**
 
