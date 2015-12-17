@@ -106,7 +106,11 @@ class Seq2SeqModel(object):
       # Try using multiple GPUs simultaneously
       first_layer = rnn_cell.GRUCell(size, gpu_for_layer=0)
       second_layer = rnn_cell.GRUCell(size, gpu_for_layer=1)
-      cell = rnn_cell.MultiRNNCell(([first_layer] * int(num_layers / 2)) + ([second_layer] * int(num_layers / 2)))
+      third_layer = rnn_cell.GRUCell(size, gpu_for_layer=2)
+      fourth_layer = rnn_cell.GRUCell(size, gpu_for_layer=3)
+
+      # it's assumed that seq2seq encoder and decoder both have 4 layers
+      cell = rnn_cell.MultiRNNCell([first_layer, second_layer, third_layer, fourth_layer])
 
     # The seq2seq function: we use embedding for the input and attention.
     def seq2seq_f(encoder_inputs, decoder_inputs, do_decode):
