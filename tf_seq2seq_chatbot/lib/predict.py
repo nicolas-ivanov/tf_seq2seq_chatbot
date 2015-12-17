@@ -12,7 +12,7 @@ def predict():
             test_sentences = [s.strip() for s in test_fh.readlines()]
         return test_sentences
 
-    results_filename = '_'.join(['results', FLAGS.num_layers, FLAGS.size, FLAGS.vocab_size])
+    results_filename = '_'.join(['results', str(FLAGS.num_layers), str(FLAGS.size), str(FLAGS.vocab_size)])
     results_path = os.path.join(FLAGS.results_dir, results_filename)
 
     with tf.Session() as sess, open(results_path, 'w') as results_fh:
