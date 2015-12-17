@@ -2,7 +2,9 @@ import sys
 import os
 import math
 import time
+
 import numpy as np
+
 from six.moves import xrange  # pylint: disable=redefined-builtin
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -19,7 +21,10 @@ def train():
     print("Preparing dialog data in %s" % FLAGS.data_dir)
     train_data, dev_data, _ = data_utils.prepare_dialog_data(FLAGS.data_dir, FLAGS.vocab_size)
 
-    with tf.Session() as sess:
+    config = tf.ConfigProto()
+    config.gpu_options.allocator_type = 'BFC'
+
+    with tf.Session(config = config) as sess:
 
         # Create model.
         print("Creating %d layers of %d units." % (FLAGS.num_layers, FLAGS.size))
