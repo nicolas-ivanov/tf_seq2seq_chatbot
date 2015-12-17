@@ -1,26 +1,8 @@
-# Description:
+# cription:
 # Example conversation chatbot model
 
 package(default_visibility = ["//visibility:public"])
 
-
-py_library(
-    name = "rnn_enhanced",
-    srcs = [
-        "tf_seq2seq_chatbot/rnn_enhancement/cf.py",
-        "tf_seq2seq_chatbot/rnn_enhancement/decoding_enhanced.py",
-        "tf_seq2seq_chatbot/rnn_enhancement/linear_enhanced.py",
-        "tf_seq2seq_chatbot/rnn_enhancement/linear_functions_enhanced.py",
-        "tf_seq2seq_chatbot/rnn_enhancement/rnn_cell_enhanced.py",
-        "tf_seq2seq_chatbot/rnn_enhancement/rnn_enhanced.py",
-        "tf_seq2seq_chatbot/rnn_enhancement/seq2seq_enhanced.py",
-        "tf_seq2seq_chatbot/rnn_enhancement/unitary_linear.py",
-        "tf_seq2seq_chatbot/rnn_enhancement/unitary_rnn_library.py"
-    ],
-    deps = [
-        "//tensorflow:tensorflow_py",
-    ],
-)
 
 py_library(
     name = "tf_seq2seq",
@@ -35,8 +17,6 @@ py_library(
     ],
     deps = [
         "//tensorflow:tensorflow_py",
-        ":rnn_enhanced",
-        ":Project-RNN-Enhancement"
     ],
 )
 
@@ -86,3 +66,4 @@ filegroup(
     ),
     visibility = ["//tensorflow:__subpackages__"],
 )
+
