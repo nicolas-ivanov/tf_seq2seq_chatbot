@@ -14,17 +14,14 @@ import tensorflow as tf
 from tf_seq2seq_chatbot.lib.seq2seq_model_utils import create_model
 from tf_seq2seq_chatbot.configs.config import FLAGS, BUCKETS
 from tf_seq2seq_chatbot.lib.data_utils import read_data
-from tf_seq2seq_chatbot.lib import data_utils, predict
+from tf_seq2seq_chatbot.lib import data_utils
 
 
 def train():
     print("Preparing dialog data in %s" % FLAGS.data_dir)
     train_data, dev_data, _ = data_utils.prepare_dialog_data(FLAGS.data_dir, FLAGS.vocab_size)
 
-    config = tf.ConfigProto()
-    config.gpu_options.allocator_type = 'BFC'
-
-    with tf.Session(config = config) as sess:
+    with tf.Session() as sess:
 
         # Create model.
         print("Creating %d layers of %d units." % (FLAGS.num_layers, FLAGS.size))
