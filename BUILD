@@ -24,7 +24,7 @@ py_library(
 py_binary(
     name = "train",
     srcs = [
-        "bin/train.py",
+        "train.py",
     ],
     deps = [
         "//tensorflow:tensorflow_py",
@@ -35,7 +35,7 @@ py_binary(
 py_binary(
     name = "test",
     srcs = [
-        "bin/test.py",
+        "test.py",
     ],
     deps = [
         "//tensorflow:tensorflow_py",
@@ -46,7 +46,7 @@ py_binary(
 py_binary(
     name = "chat",
     srcs = [
-        "bin/chat.py",
+        "chat.py",
     ],
     deps = [
         "//tensorflow:tensorflow_py",
