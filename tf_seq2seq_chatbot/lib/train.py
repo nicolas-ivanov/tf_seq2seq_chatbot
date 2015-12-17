@@ -94,6 +94,3 @@ def train():
               print("  eval: bucket %d perplexity %.2f" % (bucket_id, eval_ppx))
 
             sys.stdout.flush()
-
-            # Print prediction results for the test set
-            predict.predict()
