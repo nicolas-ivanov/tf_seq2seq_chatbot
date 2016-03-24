@@ -38,23 +38,23 @@ Curtesy of [this](http://googleresearch.blogspot.ru/2015/11/computer-respond-to-
 
     git clone git@github.com:nicolas-ivanov/tf_seq2seq_chatbot.git
     cd tf_seq2seq_chatbot
-    bash bin/setup.sh
+    bash setup.sh
     
 **Run**
 
 Train a seq2seq model on a small (17 MB) corpus of movie subtitles:
 
-    python bin/train.py
+    python train.py
     
 (this command will run the training on a CPU... GPU instructions are coming)
 
 Test trained trained model on a set of common questions:
 
-    python bin/test.py
+    python test.py
     
 Chat with trained model in console:
 
-    python bin/chat.py
+    python chat.py
     
 All configuration params are stored at `tf_seq2seq_chatbot/configs/config.py`
 
@@ -62,7 +62,7 @@ All configuration params are stored at `tf_seq2seq_chatbot/configs/config.py`
 
 If you are lucky to have a proper gpu configuration for tensorflow already, this should do the job:
 
-    python bin/train.py
+    python train.py
     
 Otherwise you may need to build tensorflow from source and run the code as follows:
 
@@ -74,5 +74,5 @@ Otherwise you may need to build tensorflow from source and run the code as follo
 **Requirements**
 
 * [tensorflow](https://www.tensorflow.org/versions/master/get_started/os_setup.html)
-* [tweaked version](https://github.com/nicolas-ivanov/Seq2Seq_Upgrade_TensorFlow) of the aforementioned Project_RNN_Enhancement lib (`bash bin/setup.sh` gonna get it for you)
+* [tweaked version](https://github.com/nicolas-ivanov/Seq2Seq_Upgrade_TensorFlow) of the aforementioned Project_RNN_Enhancement lib (`bash setup.sh` gonna get it for you)
     
