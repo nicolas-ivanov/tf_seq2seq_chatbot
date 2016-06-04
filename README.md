@@ -2,6 +2,7 @@
 
 Build a general-purpose conversational chatbot based on a hot 
 seq2seq approach implemented in [tensorflow](https://www.tensorflow.org/versions/master/tutorials/seq2seq/index.html#sequence-to-sequence_basics).
+Since it doesn't produce good results so far, also consider other implementations of [seq2seq](https://github.com/nicolas-ivanov/nn_chatbot_links).
 
 The current results are pretty lousy:
 
