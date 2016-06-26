@@ -1,27 +1,30 @@
+# Copyright 2015 The TensorFlow Authors. All Rights Reserved.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+# ==============================================================================
+
 """Sequence-to-sequence model with an attention mechanism."""
 
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-# import os
-# import sys
-# sys.path.insert(0, os.environ['HOME'] + 'Code/Project_RNN_Enhancement') #add the dir that you cloned to
-# from Project_RNN_Enhancement.rnn_enhancement import seq2seq_enhanced as seq2seq, rnn_cell_enhanced as rnn_cell, decoding_enhanced
-
 import random
+
 import numpy as np
-from six.moves import xrange  # pylint: disable=redefined-builtin
 import tensorflow as tf
-
-from rnn_enhancement import rnn_cell_enhanced as rnn_cell
-from rnn_enhancement import seq2seq_enhanced as seq2seq
-
-# from tensorflow.models.rnn import rnn_cell
-# from tensorflow.models.rnn import seq2seq
-
-
-from tf_seq2seq_chatbot.lib import data_utils
+from six.moves import xrange  # pylint: disable=redefined-builtin
+from tensorflow.models.rnn.translate import data_utils
 
 
 class Seq2SeqModel(object):
@@ -36,7 +39,7 @@ class Seq2SeqModel(object):
   version of this model, but with bi-directional encoder, was presented in
     http://arxiv.org/abs/1409.0473
   and sampled softmax is described in Section 3 of the following paper.
-    http://arxiv.org/pdf/1412.2007v2.pdf
+    http://arxiv.org/abs/1412.2007
   """
 
   def __init__(self, source_vocab_size, target_vocab_size, buckets, size,
@@ -79,44 +82,33 @@ class Seq2SeqModel(object):
     softmax_loss_function = None
     # Sampled softmax only makes sense if we sample less than vocabulary size.
     if num_samples > 0 and num_samples < self.target_vocab_size:
-      with tf.device("/cpu:0"):
-        w = tf.get_variable("proj_w", [size, self.target_vocab_size])
-        w_t = tf.transpose(w)
-        b = tf.get_variable("proj_b", [self.target_vocab_size])
+      w = tf.get_variable("proj_w", [size, self.target_vocab_size])
+      w_t = tf.transpose(w)
+      b = tf.get_variable("proj_b", [self.target_vocab_size])
       output_projection = (w, b)
 
       def sampled_loss(inputs, labels):
-        with tf.device("/cpu:0"):
-          labels = tf.reshape(labels, [-1, 1])
-          return tf.nn.sampled_softmax_loss(w_t, b, inputs, labels, num_samples,
-                                            self.target_vocab_size)
+        labels = tf.reshape(labels, [-1, 1])
+        return tf.nn.sampled_softmax_loss(w_t, b, inputs, labels, num_samples,
+                self.target_vocab_size)
       softmax_loss_function = sampled_loss
 
     # Create the internal multi-layer cell for our RNN.
-    single_cell = rnn_cell.GRUCell(size)
-
-    # if use_lstm:
-    #   print('use lstm')
-    #   single_cell = rnn_cell.BasicLSTMCell(size)
-
+    single_cell = tf.nn.rnn_cell.GRUCell(size)
+    if use_lstm:
+      single_cell = tf.nn.rnn_cell.BasicLSTMCell(size)
     cell = single_cell
     if num_layers > 1:
-      #cell = rnn_cell.MultiRNNCell([single_cell] * num_layers)
-
-      # Try using multiple GPUs simultaneously
-      first_layer = rnn_cell.GRUCell(size, gpu_for_layer=0)
-      second_layer = rnn_cell.GRUCell(size, gpu_for_layer=1)
-      third_layer = rnn_cell.GRUCell(size, gpu_for_layer=2)
-      fourth_layer = rnn_cell.GRUCell(size, gpu_for_layer=3)
-
-      # it's assumed that seq2seq encoder and decoder both have 4 layers
-      cell = rnn_cell.MultiRNNCell([first_layer, second_layer, third_layer, fourth_layer])
+      cell = tf.nn.rnn_cell.MultiRNNCell([single_cell] * num_layers)
 
     # The seq2seq function: we use embedding for the input and attention.
     def seq2seq_f(encoder_inputs, decoder_inputs, do_decode):
-      return seq2seq.embedding_attention_seq2seq(
-          encoder_inputs, decoder_inputs, cell, source_vocab_size,
-          target_vocab_size, output_projection=output_projection,
+      return tf.nn.seq2seq.embedding_attention_seq2seq(
+          encoder_inputs, decoder_inputs, cell,
+          num_encoder_symbols=source_vocab_size,
+          num_decoder_symbols=target_vocab_size,
+          embedding_size=size,
+          output_projection=output_projection,
           feed_previous=do_decode)
 
     # Feeds for inputs.
@@ -138,21 +130,21 @@ class Seq2SeqModel(object):
 
     # Training outputs and losses.
     if forward_only:
-      self.outputs, self.losses = seq2seq.model_with_buckets(
+      self.outputs, self.losses = tf.nn.seq2seq.model_with_buckets(
           self.encoder_inputs, self.decoder_inputs, targets,
-          self.target_weights, buckets, self.target_vocab_size,
-          lambda x, y: seq2seq_f(x, y, True),
+          self.target_weights, buckets, lambda x, y: seq2seq_f(x, y, True),
           softmax_loss_function=softmax_loss_function)
       # If we use output projection, we need to project outputs for decoding.
       if output_projection is not None:
         for b in xrange(len(buckets)):
-          self.outputs[b] = [tf.nn.xw_plus_b(output, output_projection[0],
-                                             output_projection[1])
-                             for output in self.outputs[b]]
+          self.outputs[b] = [
+              tf.matmul(output, output_projection[0]) + output_projection[1]
+              for output in self.outputs[b]
+          ]
     else:
-      self.outputs, self.losses = seq2seq.model_with_buckets(
+      self.outputs, self.losses = tf.nn.seq2seq.model_with_buckets(
           self.encoder_inputs, self.decoder_inputs, targets,
-          self.target_weights, buckets, self.target_vocab_size,
+          self.target_weights, buckets,
           lambda x, y: seq2seq_f(x, y, False),
           softmax_loss_function=softmax_loss_function)
 
@@ -161,12 +153,9 @@ class Seq2SeqModel(object):
     if not forward_only:
       self.gradient_norms = []
       self.updates = []
-
-      # TODO: try AdagradOptimizer or RMSPropOptimizer
       opt = tf.train.GradientDescentOptimizer(self.learning_rate)
-      print('use aggregation_method=2')
       for b in xrange(len(buckets)):
-        gradients = tf.gradients(self.losses[b], params, aggregation_method=2)
+        gradients = tf.gradients(self.losses[b], params)
         clipped_gradients, norm = tf.clip_by_global_norm(gradients,
                                                          max_gradient_norm)
         self.gradient_norms.append(norm)
@@ -192,7 +181,7 @@ class Seq2SeqModel(object):
       average perplexity, and the outputs.
 
     Raises:
-      ValueError: if length of enconder_inputs, decoder_inputs, or
+      ValueError: if length of encoder_inputs, decoder_inputs, or
         target_weights disagrees with bucket size for the specified bucket_id.
     """
     # Check if the sizes match.
