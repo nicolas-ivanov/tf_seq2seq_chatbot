@@ -37,46 +37,30 @@ def create_model(session, forward_only):
 
 
 def get_predicted_sentence(input_sentence, vocab, rev_vocab, model, sess):
-    def softmax(x):
-        """Compute softmax values for each sets of scores in x."""
-        return np.exp(x) / np.sum(np.exp(x), axis=0)
-
-    def _sample(probs, temperature=1.0):
-        """
-        helper function to sample an index from a probability array
-        """
-        strethced_probs = np.log(probs) / temperature
-        vocab_size = len(strethced_probs)
-        strethced_probs = np.exp(strethced_probs) / np.sum(np.exp(strethced_probs))
-        idx = np.random.choice(vocab_size, p=strethced_probs)
-        idx_prob = strethced_probs[idx]
-        return idx, idx_prob
-
     input_token_ids = data_utils.sentence_to_token_ids(input_sentence, vocab)
-    temperature = 0.5
 
     # Which bucket does it belong to?
     bucket_id = min([b for b in xrange(len(BUCKETS)) if BUCKETS[b][0] > len(input_token_ids)])
-    output_token_ids = []
-    max_answer_len_for_bucket = BUCKETS[bucket_id][1]
+    outputs = []
 
-    for i in xrange(max_answer_len_for_bucket):
-        feed_data = {bucket_id: [(input_token_ids, output_token_ids)]}
-        # Get a 1-element batch to feed the sentence to the model.
-        encoder_inputs, decoder_inputs, target_weights = model.get_batch(feed_data, bucket_id)
+    feed_data = {bucket_id: [(input_token_ids, outputs)]}
+    # Get a 1-element batch to feed the sentence to the model.
+    encoder_inputs, decoder_inputs, target_weights = model.get_batch(feed_data, bucket_id)
 
-        # Get output logits for the sentence.
-        _, _, output_logits = model.step(sess, encoder_inputs, decoder_inputs, target_weights, bucket_id, forward_only=True)
+    # Get output logits for the sentence.
+    _, _, output_logits = model.step(sess, encoder_inputs, decoder_inputs, target_weights, bucket_id, forward_only=True)
 
-        # only interested in i-th logit on i-th step
-        curr_logit = output_logits[i][0]
-        curr_probs = softmax(curr_logit)
+    outputs = []
+    # This is a greedy decoder - outputs are just argmaxes of output_logits.
+    for logit in output_logits:
+        selected_token_id = int(np.argmax(logit, axis=1))
 
-        # time to sample with temperature:
-        curr_token_id, curr_prob = _sample(curr_probs, temperature)
-        output_token_ids += [curr_token_id]
+        if selected_token_id == data_utils.EOS_ID:
+            break
+        else:
+            outputs.append(selected_token_id)
 
     # Forming output sentence on natural language
-    output_sentence = ' '.join([rev_vocab[output] for output in output_token_ids])
+    output_sentence = ' '.join([rev_vocab[output] for output in outputs])
 
     return output_sentence
