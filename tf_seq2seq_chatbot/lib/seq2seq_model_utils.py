@@ -2,9 +2,9 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+import numpy as np
 import tensorflow as tf
 from tensorflow.python.platform import gfile
-from rnn_enhancement import decoding_enhanced
 
 from tf_seq2seq_chatbot.configs.config import FLAGS, BUCKETS
 from tf_seq2seq_chatbot.lib import data_utils
@@ -36,35 +36,47 @@ def create_model(session, forward_only):
   return model
 
 
-def _get_predicted_sentence(input_sentence, vocab, rev_vocab, model, sess):
-    token_ids = data_utils.sentence_to_token_ids(input_sentence, vocab)
+def get_predicted_sentence(input_sentence, vocab, rev_vocab, model, sess):
+    def softmax(x):
+        """Compute softmax values for each sets of scores in x."""
+        return np.exp(x) / np.sum(np.exp(x), axis=0)
+
+    def _sample(probs, temperature=1.0):
+        """
+        helper function to sample an index from a probability array
+        """
+        strethced_probs = np.log(probs) / temperature
+        vocab_size = len(strethced_probs)
+        strethced_probs = np.exp(strethced_probs) / np.sum(np.exp(strethced_probs))
+        idx = np.random.choice(vocab_size, p=strethced_probs)
+        idx_prob = strethced_probs[idx]
+        return idx, idx_prob
+
+    input_token_ids = data_utils.sentence_to_token_ids(input_sentence, vocab)
+    temperature = 0.5
 
     # Which bucket does it belong to?
-    bucket_id = min([b for b in xrange(len(BUCKETS)) if BUCKETS[b][0] > len(token_ids)])
+    bucket_id = min([b for b in xrange(len(BUCKETS)) if BUCKETS[b][0] > len(input_token_ids)])
+    output_token_ids = []
+    max_answer_len_for_bucket = BUCKETS[bucket_id][1]
 
-    # Get a 1-element batch to feed the sentence to the model.
-    encoder_inputs, decoder_inputs, target_weights = model.get_batch({bucket_id: [(token_ids, [])]}, bucket_id)
+    for i in xrange(max_answer_len_for_bucket):
+        feed_data = {bucket_id: [(input_token_ids, output_token_ids)]}
+        # Get a 1-element batch to feed the sentence to the model.
+        encoder_inputs, decoder_inputs, target_weights = model.get_batch(feed_data, bucket_id)
 
-    # Get output logits for the sentence.
-    _, _, output_logits = model.step(sess, encoder_inputs, decoder_inputs, target_weights, bucket_id, forward_only=True)
+        # Get output logits for the sentence.
+        _, _, output_logits = model.step(sess, encoder_inputs, decoder_inputs, target_weights, bucket_id, forward_only=True)
 
-    TEMPERATURE = 0.7
-    outputs = []
+        # only interested in i-th logit on i-th step
+        curr_logit = output_logits[i][0]
+        curr_probs = softmax(curr_logit)
 
-    # TODO: output_logits - tuple?
-    for logit in output_logits:
-        select_word_number = int(decoding_enhanced.sample_with_temperature(logit[0], TEMPERATURE))
-
-        if select_word_number == data_utils.EOS_ID:
-            # Stop at EOS symbol
-            break
-        # Else continue forming the list of ids
-        outputs.append(select_word_number)
-
-    # This is a greedy decoder - outputs are just argmaxes of output_logits.
-    # outputs = [int(np.argmax(logit, axis=1)) for logit in output_logits]
+        # time to sample with temperature:
+        curr_token_id, curr_prob = _sample(curr_probs, temperature)
+        output_token_ids += [curr_token_id]
 
     # Forming output sentence on natural language
-    output_sentence = ' '.join([rev_vocab[output] for output in outputs])
+    output_sentence = ' '.join([rev_vocab[output] for output in output_token_ids])
 
     return output_sentence

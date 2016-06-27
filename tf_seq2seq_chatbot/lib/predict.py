@@ -1,9 +1,10 @@
 import os
+
 import tensorflow as tf
 
 from tf_seq2seq_chatbot.configs.config import TEST_DATASET_PATH, FLAGS
 from tf_seq2seq_chatbot.lib import data_utils
-from tf_seq2seq_chatbot.lib.seq2seq_model_utils import create_model, _get_predicted_sentence
+from tf_seq2seq_chatbot.lib.seq2seq_model_utils import create_model, get_predicted_sentence
 
 
 def predict():
@@ -28,7 +29,7 @@ def predict():
 
         for sentence in test_dataset:
             # Get token-ids for the input sentence.
-            predicted_sentence = _get_predicted_sentence(sentence, vocab, rev_vocab, model, sess)
+            predicted_sentence = get_predicted_sentence(sentence, vocab, rev_vocab, model, sess)
             print(sentence, ' -> ', predicted_sentence)
 
             results_fh.write(predicted_sentence + '\n')

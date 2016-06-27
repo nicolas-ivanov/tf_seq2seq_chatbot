@@ -1,10 +1,11 @@
 import os
 import sys
+
 import tensorflow as tf
 
 from tf_seq2seq_chatbot.configs.config import FLAGS
 from tf_seq2seq_chatbot.lib import data_utils
-from tf_seq2seq_chatbot.lib.seq2seq_model_utils import create_model, _get_predicted_sentence
+from tf_seq2seq_chatbot.lib.seq2seq_model_utils import create_model, get_predicted_sentence
 
 
 def chat():
@@ -23,7 +24,7 @@ def chat():
     sentence = sys.stdin.readline()
 
     while sentence:
-        predicted_sentence = _get_predicted_sentence(sentence, vocab, rev_vocab, model, sess)
+        predicted_sentence = get_predicted_sentence(sentence, vocab, rev_vocab, model, sess)
         print(predicted_sentence)
         print("> ")
         sys.stdout.flush()

@@ -1,6 +1,6 @@
 import tensorflow as tf
 
-TEST_DATASET_PATH = 'data/test/test_set.txt'
+TEST_DATASET_PATH = 'tf_seq2seq_chatbot/data/test/test_set.txt'
 SAVE_DATA_DIR = '/var/lib/tf_seq2seq_chatbot/'
 
 tf.app.flags.DEFINE_string('data_dir', SAVE_DATA_DIR + 'data', 'Data directory')
