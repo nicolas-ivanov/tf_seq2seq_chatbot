@@ -1,2 +1,2 @@
-tensorflow==0.9.0rc0
+tensorflow==1.15.2
 
